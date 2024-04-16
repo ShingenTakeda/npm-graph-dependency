@@ -42,7 +42,10 @@ export class grafo
         {
             return
         }
-        this.lista_adj.get(v).push(new aresta(v, u, peso, nome))
+
+        console.log("nande")
+        let tmp_a = new aresta(v, u, peso, nome)
+        this.lista_adj.get(v).push(tmp_a)
     }
 
     sao_adjacentes(v, u)

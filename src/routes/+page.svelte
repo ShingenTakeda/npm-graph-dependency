@@ -10,10 +10,6 @@
     let b = new Map(Object.entries( a["packages"]))
 
 
-	if(b instanceof Map)
-	{
-		console.log("WHAT")
-	}
 
 	let g = create_graph_from_json(b)
 	console.log(g.lista_adj)
