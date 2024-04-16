@@ -3,84 +3,20 @@
 	import * as THREE from "three"
     import fs from "node:fs"
     import a from "../package_copy.json"
+	import "../js/dfs"
+    import { create_graph_from_json } from '../js/dfs';
 
-	class vertice
+
+    let b = new Map(Object.entries( a["packages"]))
+
+
+	if(b instanceof Map)
 	{
-		constructor()
-		{
-			this.nome = ""
-		}
+		console.log("WHAT")
 	}
 
-	class aresta
-	{
-		constructor(c, v, p, n)
-		{
-			this.comeco = c//vertice
-			this.dest = v//vertice destino
-			this.peso = p
-			this.nome = n
-		}
-	}
-
-	class grafo
-	{
-		constructor()
-		{
-			this.vertices = []
-			this.lista_adj = new Map();
-		}
-
-		addVertices(v)
-		{
-			if(v in this.vertices)
-			{
-				return
-			}
-
-			this.vertices.push(v)
-			this.lista_adj.set(v, [])
-		}
-
-		addAresta(v, u, peso = 0, nome = "")
-		{
-			if(!(v in this.vertices && u in this.vertices))
-			{
-				return
-			}
-			this.lista_adj.get(v).push(new aresta(v, u, peso, nome))
-		}
-
-		sao_adjacentes(v, u)
-		{
-			if(!(v in this.vertices && u in this.vertices))
-			{
-				return
-			}
-
-			this.lista_adj.get(v).forEach(element => {
-				if(element === u)
-				{
-					return true
-				}
-			})
-
-			return false
-		}
-
-		remover_aresta(v, a)
-		{
-			if(!(v in this.vertices && a in this.vertices.get(v)))
-			{
-				return
-			}
-
-			const indice = this.vertices.get(v).indexOf(a)
-			this.vertices.get(v).splice(index, 1)
-		}
-	}
-    
-    console.log(a)
+	let g = create_graph_from_json(b)
+	console.log(g.lista_adj)
 
 	if(browser) {
 		let camera
