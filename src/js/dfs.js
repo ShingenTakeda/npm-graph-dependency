@@ -117,7 +117,6 @@ export function create_graph_from_json(map)
 
     if(map === null)
     {
-        console.log("WHY")
         return
     }
 
