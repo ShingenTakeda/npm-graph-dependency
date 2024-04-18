@@ -9,10 +9,15 @@
 
     let b = new Map(Object.entries( a["packages"]))
 
-
-
 	let g = create_graph_from_json(b)
-	console.log(g.lista_adj)
+	// console.log(g.lista_adj)
+
+	// for(let [key, value] of g.lista_adj)
+	// {
+	// 	console.log(g.lista_adj.get(key))
+	// }
+
+	g.dfs()
 
 	if(browser) {
 		let camera

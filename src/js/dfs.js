@@ -38,12 +38,9 @@ export class grafo
 
     addAresta(v, u, peso = 0, nome = "")
     {
-        if(!(v in this.vertices && u in this.vertices))
-        {
-            return
-        }
 
-        console.log("nande")
+
+        //console.log("nande")
         let tmp_a = new aresta(v, u, peso, nome)
         this.lista_adj.get(v).push(tmp_a)
     }
@@ -76,9 +73,41 @@ export class grafo
         this.vertices.get(v).splice(index, 1)
     }
 
+    dfs(v = 0, tempo = 0, time_in = [], time_out = [])
+    {
+        tempo = tempo + 1
+        time_in[v] = 0
+
+        for(e of this.lista_adj(v))
+        {
+            let u = this.vertices.indexOf(e.dest)
+            
+            if(time_out[u] == undefined)
+            {
+                [tempo, time_in, time_out] = dfs(u, tempo, time_in, time_out)
+            }
+        }
+
+        tempo = tempo + 1
+        time_out[v] = time
+        return [tempo, time_in, time_out]
+    }
+
     dfs()
     {
+        let tempo = 0
+        let time_in = []
+        let time_out = []
 
+        for(let i = 0; i < this.vertices.length; i++)
+        {
+            if(time_in[i] == undefined)
+            {
+                [tempo, time_in, time_out] = this.dfs(i, tempo, time_in, time_out)
+            }
+        }
+
+        return [time_in, time_out]
     }
 }
 
@@ -119,19 +148,20 @@ export function create_graph_from_json(map)
     
     for(let i of g.vertices)
     {
-        //console.log(i)
         for(let [key, value] of map)
         {
+            
             if(value.dependencies != undefined)
             {
                 let tmp_arr = Object.keys(value.dependencies)
-                for(let j of tmp_arr)
+                for(let j = 0; j < tmp_arr.length; j++)
                 {
-                    let tmp_vert = new vertice(j)
-                    // console.log(i)
-                    g.addAresta(i, tmp_vert, 0, "")
+                    if(key.includes(i.nome))
+                    {
+                        let tmp_vert = new vertice(tmp_arr[j])
+                        g.addAresta(i, tmp_vert, 0, i.nome + "->" + tmp_arr[j])
+                    }
                 }
-                //console.log(tmp_arr)
             }
             else
             {
