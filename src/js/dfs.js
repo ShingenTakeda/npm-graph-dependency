@@ -50,48 +50,81 @@ export class grafo {
         return false; // Retorna falso se os vértices não forem adjacentes.
     }
 
-    // Método para remover uma aresta do grafo.
-    remover_aresta(v, a) {
-        if (!(v in this.vertices && a in this.vertices.get(v))) {
-            return; // Retorna se o vértice de origem ou a aresta não existirem no grafo.
-        }
-        const indice = this.vertices.get(v).indexOf(a); // Encontra o índice da aresta na lista de adjacências do vértice.
-        this.vertices.get(v).splice(index, 1); // Remove a aresta da lista de adjacências do vértice.
-    }
+    // // Método para remover uma aresta do grafo.
+    // remover_aresta(v, a) {
+    //     if (!(v in this.vertices && a in this.vertices.get(v))) {
+    //         return; // Retorna se o vértice de origem ou a aresta não existirem no grafo.
+    //     }
+    //     const indice = this.vertices.get(v).indexOf(a); // Encontra o índice da aresta na lista de adjacências do vértice.
+    //     this.vertices.get(v).splice(index, 1); // Remove a aresta da lista de adjacências do vértice.
+    // }
 
-    // Método de busca em profundidade (DFS) recursivo.
-    dfs(v = 0, tempo = 0, time_in = [], time_out = []) {
-        tempo = tempo + 1; // Incrementa o tempo.
-        time_in[v] = 0; // Define o tempo de início para o vértice atual.
+    // // Método de busca em profundidade (DFS) recursivo.
+    // dfs(v = 0, tempo = 0, time_in = [], time_out = []) {
+    //     tempo = tempo + 1; // Incrementa o tempo.
+    //     time_in[v] = 0; // Define o tempo de início para o vértice atual.
 
-        for (e of this.lista_adj(v)) { // Para cada vértice adjacente ao vértice atual.
-            let u = this.vertices.indexOf(e.dest); // Encontra o índice do vértice adjacente.
+    //     for (e of this.lista_adj(v)) { // Para cada vértice adjacente ao vértice atual.
+    //         let u = this.vertices.indexOf(e.dest); // Encontra o índice do vértice adjacente.
             
-            if (time_out[u] == undefined) { // Se o vértice adjacente ainda não foi visitado.
-                [tempo, time_in, time_out] = dfs(u, tempo, time_in, time_out); // Chama recursivamente a DFS para o vértice adjacente.
+    //         if (time_out[u] == undefined) { // Se o vértice adjacente ainda não foi visitado.
+    //             [tempo, time_in, time_out] = dfs(u, tempo, time_in, time_out); // Chama recursivamente a DFS para o vértice adjacente.
+    //         }
+    //     }
+
+    //     tempo = tempo + 1; // Incrementa o tempo.
+    //     time_out[v] = time; // Define o tempo de término para o vértice atual.
+    //     return [tempo, time_in, time_out]; // Retorna o tempo, os tempos de início e de término.
+    // }
+
+    // // Método de busca em profundidade (DFS) para todo o grafo.
+    // dfs() {
+    //     let tempo = 0; // Tempo inicial.
+    //     let time_in = []; // Array para os tempos de início.
+    //     let time_out = []; // Array para os tempos de término.
+
+    //     for (let i = 0; i < this.vertices.length; i++) { // Para cada vértice no grafo.
+    //         if (time_in[i] == undefined) { // Se o vértice ainda não foi visitado.
+    //             [tempo, time_in, time_out] = this.dfs(i, tempo, time_in, time_out); // Chama a DFS para esse vértice.
+    //         }
+    //     }
+
+    //     return [time_in, time_out]; // Retorna os tempos de início e de término para todos os vértices.
+    // }
+
+    dfs()
+    {
+        const stack = this.vertices
+        const visitado = new Set()
+        const resultado = []
+
+        while(stack.length)
+        {
+            const vertice = stack.pop()
+            let tmp_lista = this.lista_adj.get(vertice)
+
+            // console.log(tmp_lista)
+
+            if(!visitado.has(vertice))
+            {
+                visitado.add(vertice)
+                resultado.push(vertice)
+
+                if(isIterable(tmp_lista))
+                {
+                    for(const e of tmp_lista)
+                    {
+                        stack.push(e.dest)
+                    }
+                }
             }
         }
 
-        tempo = tempo + 1; // Incrementa o tempo.
-        time_out[v] = time; // Define o tempo de término para o vértice atual.
-        return [tempo, time_in, time_out]; // Retorna o tempo, os tempos de início e de término.
-    }
-
-    // Método de busca em profundidade (DFS) para todo o grafo.
-    dfs() {
-        let tempo = 0; // Tempo inicial.
-        let time_in = []; // Array para os tempos de início.
-        let time_out = []; // Array para os tempos de término.
-
-        for (let i = 0; i < this.vertices.length; i++) { // Para cada vértice no grafo.
-            if (time_in[i] == undefined) { // Se o vértice ainda não foi visitado.
-                [tempo, time_in, time_out] = this.dfs(i, tempo, time_in, time_out); // Chama a DFS para esse vértice.
-            }
-        }
-
-        return [time_in, time_out]; // Retorna os tempos de início e de término para todos os vértices.
+        return resultado
     }
 }
+
+const isIterable = x => !!x?.[Symbol.iterator];
 
 // Função para criar um grafo a partir de um mapa JSON.
 export function create_graph_from_json(map) {

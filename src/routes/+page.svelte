@@ -17,7 +17,7 @@
 	// 	console.log(g.lista_adj.get(key))
 	// }
 
-	g.dfs()
+	console.log(g.dfs())
 
 	if(browser) {
 		let camera
