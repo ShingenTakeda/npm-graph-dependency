@@ -1,172 +1,131 @@
-export class vertice
-{
-    constructor(nome = "")
-    {
-        this.nome = nome
+// Definição da classe "vertice" que representa um vértice no grafo.
+export class vertice {
+    constructor(nome = "") {
+        this.nome = nome; // Nome do vértice.
     }
 }
 
-export class aresta
-{
-    constructor(c = vertice, v = vertice, p = 0, n = "")
-    {
-        this.comeco = c//vertice
-        this.dest = v//vertice destino
-        this.peso = p
-        this.nome = n
+// Definição da classe "aresta" que representa uma aresta no grafo.
+export class aresta {
+    constructor(c = vertice, v = vertice, p = 0, n = "") {
+        this.comeco = c; // Vértice de início da aresta.
+        this.dest = v; // Vértice de destino da aresta.
+        this.peso = p; // Peso da aresta (opcional).
+        this.nome = n; // Nome da aresta (opcional).
     }
 }
 
-export class grafo
-{
-    constructor()
-    {
-        this.vertices = []
-        this.lista_adj = new Map();
+// Definição da classe "grafo" que representa um grafo.
+export class grafo {
+    constructor() {
+        this.vertices = []; // Lista de vértices do grafo.
+        this.lista_adj = new Map(); // Lista de adjacências do grafo.
     }
 
-    addVertices(v)
-    {
-        if(v in this.vertices)
-        {
-            return
+    // Método para adicionar vértices ao grafo.
+    addVertices(v) {
+        if (!this.vertices.includes(v)) { // Verifica se o vértice já está presente no grafo.
+            this.vertices.push(v); // Adiciona o vértice à lista de vértices.
+            this.lista_adj.set(v, []); // Inicializa a lista de adjacências do vértice como vazia.
         }
-
-        this.vertices.push(v)
-        this.lista_adj.set(v, [])
     }
 
-    addAresta(v, u, peso = 0, nome = "")
-    {
-
-
-        //console.log("nande")
-        let tmp_a = new aresta(v, u, peso, nome)
-        this.lista_adj.get(v).push(tmp_a)
+    // Método para adicionar uma aresta ao grafo.
+    addAresta(v, u, peso = 0, nome = "") {
+        let tmp_a = new aresta(v, u, peso, nome); // Cria uma nova aresta.
+        this.lista_adj.get(v).push(tmp_a); // Adiciona a aresta à lista de adjacências do vértice de origem.
     }
 
-    sao_adjacentes(v, u)
-    {
-        if(!(v in this.vertices && u in this.vertices))
-        {
-            return
+    // Método para verificar se dois vértices são adjacentes.
+    sao_adjacentes(v, u) {
+        if (!this.vertices.includes(v) || !this.vertices.includes(u)) { // Verifica se os vértices estão presentes no grafo.
+            return; // Retorna indefinido se um ou ambos os vértices não existirem no grafo.
         }
-
-        this.lista_adj.get(v).forEach(element => {
-            if(element === u)
-            {
-                return true
-            }
-        })
-
-        return false
+        return this.lista_adj.get(v).some(element => element.dest === u); // Verifica se há uma aresta entre os vértices.
     }
 
-    remover_aresta(v, a)
-    {
-        if(!(v in this.vertices && a in this.vertices.get(v)))
-        {
-            return
+    // Método para remover uma aresta do grafo.
+    remover_aresta(v, a) {
+        if (!this.vertices.includes(v) || !this.lista_adj.get(v).includes(a)) { // Verifica se o vértice de origem e a aresta estão presentes no grafo.
+            return; // Retorna se o vértice de origem ou a aresta não existirem no grafo.
         }
-
-        const indice = this.vertices.get(v).indexOf(a)
-        this.vertices.get(v).splice(index, 1)
+        const index = this.lista_adj.get(v).indexOf(a); // Encontra o índice da aresta na lista de adjacências do vértice.
+        this.lista_adj.get(v).splice(index, 1); // Remove a aresta da lista de adjacências do vértice.
     }
 
-    dfs(v = 0, tempo = 0, time_in = [], time_out = [])
-    {
-        tempo = tempo + 1
-        time_in[v] = 0
+    // Método de busca em profundidade (DFS) recursivo.
+    dfs(v = 0, tempo = 0, time_in = [], time_out = []) {
+        tempo = tempo + 1; // Incrementa o tempo.
+        time_in[v] = 0; // Define o tempo de início para o vértice atual.
 
-        for(e of this.lista_adj(v))
-        {
-            let u = this.vertices.indexOf(e.dest)
-            
-            if(time_out[u] == undefined)
-            {
-                [tempo, time_in, time_out] = dfs(u, tempo, time_in, time_out)
+        for (let e of this.lista_adj.get(v)) { // Para cada vértice adjacente ao vértice atual.
+            let u = this.vertices.indexOf(e.dest); // Encontra o índice do vértice adjacente.
+            if (time_out[u] === undefined) { // Se o vértice adjacente ainda não foi visitado.
+                [tempo, time_in, time_out] = this.dfs(u, tempo, time_in, time_out); // Chama recursivamente a DFS para o vértice adjacente.
             }
         }
 
-        tempo = tempo + 1
-        time_out[v] = time
-        return [tempo, time_in, time_out]
+        tempo = tempo + 1; // Incrementa o tempo.
+        time_out[v] = time; // Define o tempo de término para o vértice atual.
+        return [tempo, time_in, time_out]; // Retorna o tempo, os tempos de início e de término.
     }
 
-    dfs()
-    {
-        let tempo = 0
-        let time_in = []
-        let time_out = []
+    // Método de busca em profundidade (DFS) para todo o grafo.
+    dfs_recursive() {
+        let tempo = 0; // Tempo inicial.
+        let time_in = []; // Array para os tempos de início.
+        let time_out = []; // Array para os tempos de término.
 
-        for(let i = 0; i < this.vertices.length; i++)
-        {
-            if(time_in[i] == undefined)
-            {
-                [tempo, time_in, time_out] = this.dfs(i, tempo, time_in, time_out)
+        for (let i = 0; i < this.vertices.length; i++) { // Para cada vértice no grafo.
+            if (time_in[i] === undefined) { // Se o vértice ainda não foi visitado.
+                [tempo, time_in, time_out] = this.dfs(i, tempo, time_in, time_out); // Chama a DFS para esse vértice.
             }
         }
 
-        return [time_in, time_out]
+        return [time_in, time_out]; // Retorna os tempos de início e de término para todos os vértices.
     }
 }
 
-export function create_graph_from_json(map)
-{
-    let g = new grafo()
+// Função para criar um grafo a partir de um mapa JSON.
+export function create_graph_from_json(map) {
+    let g = new grafo(); // Cria um novo grafo.
 
-    if(map === null)
-    {
-        return
+    if (map === null) {
+        return; // Retorna se o mapa for nulo.
     }
 
-    //Adicionando vertices
-    for(let [key, value] of map)
-    {
-        // let tmp_arr = []
-        let tmp_v_string = ""
+    // Adicionando vértices ao grafo.
+    for (let [key, value] of map) {
+        let tmp_v_string = ""; // String temporária para o nome do vértice.
         
-        if(key.includes("node_modules/"))
-        {
-            tmp_v_string = key.replace("node_modules/", "")
-        }
-        else
-        {
-            tmp_v_string = key
+        if (key.includes("node_modules/")) { // Remove o prefixo "node_modules/" do nome do vértice, se presente.
+            tmp_v_string = key.replace("node_modules/", "");
+        } else {
+            tmp_v_string = key;
         }
 
-        if(key === "")
-        {
-            continue
+        if (key === "") {
+            continue; // Pula para a próxima iteração se a chave for vazia.
         }
-        let tmp_v = new vertice(tmp_v_string)
-
-        g.addVertices(tmp_v)
+        let tmp_v = new vertice(tmp_v_string); // Cria um novo vértice com o nome temporário.
+        g.addVertices(tmp_v); // Adiciona o vértice ao grafo.
     }
 
-    
-    for(let i of g.vertices)
-    {
-        for(let [key, value] of map)
-        {
-            
-            if(value.dependencies != undefined)
-            {
-                let tmp_arr = Object.keys(value.dependencies)
-                for(let j = 0; j < tmp_arr.length; j++)
-                {
-                    if(key.includes(i.nome))
-                    {
-                        let tmp_vert = new vertice(tmp_arr[j])
-                        g.addAresta(i, tmp_vert, 0, i.nome + "->" + tmp_arr[j])
+    // Adicionando arestas ao grafo com base nas dependências do mapa.
+    for (let i of g.vertices) { // Para cada vértice no grafo.
+        for (let [key, value] of map) { // Para cada chave e valor no mapa JSON.
+            if (value.dependencies != undefined) { // Se houver dependências.
+                let tmp_arr = Object.keys(value.dependencies); // Obtém as chaves das dependências.
+                for (let j = 0; j < tmp_arr.length; j++) { // Para cada dependência.
+                    if (key.includes(i.nome)) { // Se o nome do vértice estiver contido na chave.
+                        let tmp_vert = new vertice(tmp_arr[j]); // Cria um novo vértice para a dependência.
+                        g.addAresta(i, tmp_vert, 0, i.nome + "->" + tmp_arr[j]); // Adiciona uma aresta entre o vértice atual e a dependência.
                     }
                 }
-            }
-            else
-            {
-                continue
+            } else {
+                continue; // Pula para a próxima iteração se não houver dependências.
             }
         }
     }
-    return g
+    return g; // Retorna o grafo criado.
 }
