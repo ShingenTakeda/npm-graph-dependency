@@ -24,10 +24,11 @@ export class grafo {
 
     // Método para adicionar vértices ao grafo.
     addVertices(v) {
-        if (!this.vertices.includes(v)) { // Verifica se o vértice já está presente no grafo.
-            this.vertices.push(v); // Adiciona o vértice à lista de vértices.
-            this.lista_adj.set(v, []); // Inicializa a lista de adjacências do vértice como vazia.
+        if (v in this.vertices) {
+            return; // Retorna se o vértice já existe no grafo.
         }
+        this.vertices.push(v); // Adiciona o vértice à lista de vértices.
+        this.lista_adj.set(v, []); // Inicializa a lista de adjacências do vértice como vazia.
     }
 
     // Método para adicionar uma aresta ao grafo.
@@ -38,19 +39,24 @@ export class grafo {
 
     // Método para verificar se dois vértices são adjacentes.
     sao_adjacentes(v, u) {
-        if (!this.vertices.includes(v) || !this.vertices.includes(u)) { // Verifica se os vértices estão presentes no grafo.
-            return; // Retorna indefinido se um ou ambos os vértices não existirem no grafo.
+        if (!(v in this.vertices && u in this.vertices)) {
+            return; // Retorna indefinido se um ou ambos os vértices não existem no grafo.
         }
-        return this.lista_adj.get(v).some(element => element.dest === u); // Verifica se há uma aresta entre os vértices.
+        this.lista_adj.get(v).forEach(element => {
+            if (element === u) {
+                return true; // Retorna verdadeiro se os vértices forem adjacentes.
+            }
+        });
+        return false; // Retorna falso se os vértices não forem adjacentes.
     }
 
     // Método para remover uma aresta do grafo.
     remover_aresta(v, a) {
-        if (!this.vertices.includes(v) || !this.lista_adj.get(v).includes(a)) { // Verifica se o vértice de origem e a aresta estão presentes no grafo.
+        if (!(v in this.vertices && a in this.vertices.get(v))) {
             return; // Retorna se o vértice de origem ou a aresta não existirem no grafo.
         }
-        const index = this.lista_adj.get(v).indexOf(a); // Encontra o índice da aresta na lista de adjacências do vértice.
-        this.lista_adj.get(v).splice(index, 1); // Remove a aresta da lista de adjacências do vértice.
+        const indice = this.vertices.get(v).indexOf(a); // Encontra o índice da aresta na lista de adjacências do vértice.
+        this.vertices.get(v).splice(index, 1); // Remove a aresta da lista de adjacências do vértice.
     }
 
     // Método de busca em profundidade (DFS) recursivo.
@@ -58,10 +64,11 @@ export class grafo {
         tempo = tempo + 1; // Incrementa o tempo.
         time_in[v] = 0; // Define o tempo de início para o vértice atual.
 
-        for (let e of this.lista_adj.get(v)) { // Para cada vértice adjacente ao vértice atual.
+        for (e of this.lista_adj(v)) { // Para cada vértice adjacente ao vértice atual.
             let u = this.vertices.indexOf(e.dest); // Encontra o índice do vértice adjacente.
-            if (time_out[u] === undefined) { // Se o vértice adjacente ainda não foi visitado.
-                [tempo, time_in, time_out] = this.dfs(u, tempo, time_in, time_out); // Chama recursivamente a DFS para o vértice adjacente.
+            
+            if (time_out[u] == undefined) { // Se o vértice adjacente ainda não foi visitado.
+                [tempo, time_in, time_out] = dfs(u, tempo, time_in, time_out); // Chama recursivamente a DFS para o vértice adjacente.
             }
         }
 
@@ -71,13 +78,13 @@ export class grafo {
     }
 
     // Método de busca em profundidade (DFS) para todo o grafo.
-    dfs_recursive() {
+    dfs() {
         let tempo = 0; // Tempo inicial.
         let time_in = []; // Array para os tempos de início.
         let time_out = []; // Array para os tempos de término.
 
         for (let i = 0; i < this.vertices.length; i++) { // Para cada vértice no grafo.
-            if (time_in[i] === undefined) { // Se o vértice ainda não foi visitado.
+            if (time_in[i] == undefined) { // Se o vértice ainda não foi visitado.
                 [tempo, time_in, time_out] = this.dfs(i, tempo, time_in, time_out); // Chama a DFS para esse vértice.
             }
         }
